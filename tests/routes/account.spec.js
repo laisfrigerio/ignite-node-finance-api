@@ -231,3 +231,51 @@ describe('Return the operations of a account', () => {
             })
   })
 })
+
+describe('Save a deposit', () => {
+  const depositPayload = {
+      description: 'First deposit',
+      amount: 10
+  }
+
+  beforeEach(async () => {
+      await supertest(app)
+              .post('/accounts')
+              .send(payloadJohn)
+  })
+
+  it('should add a new deposit in a existing account', async () => {
+    await supertest(app)
+            .get(`/accounts/${payloadJohn.cpf}/extract`)
+            .then((response) => {
+                expect(response.body).toEqual([])
+            })
+
+    await supertest(app)
+            .post(`/accounts/${payloadJohn.cpf}/deposit`)
+            .send(depositPayload)
+            .then((response) => {
+                expect(response.status).toEqual(201)
+                expect(response.body.message).toEqual('Deposit with success')
+            })
+
+    await supertest(app)
+            .get(`/accounts/${payloadJohn.cpf}/extract`)
+            .then((response) => {
+                const firstDeposit = response.body[0]
+                expect(response.status).toEqual(200)
+                expect(firstDeposit.description).toBe('First deposit')
+                expect(firstDeposit.type).toBe('credit')
+                expect(firstDeposit.amount).toBe(10)
+            })
+  })
+
+  it('should not a deposit because the account not exists', async () => {
+    await supertest(app)
+            .post('/accounts/11111111111/deposit')
+            .send(depositPayload)
+            .then((response) => {
+                expect(response.status).toEqual(404)
+            })
+  })
+})

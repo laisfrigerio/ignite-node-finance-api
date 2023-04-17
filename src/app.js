@@ -6,6 +6,8 @@ const { findAccount } = require('./domain/find-an-account')
 const { updateAccount } = require('./domain/update-an-account')
 const { getAccountOperations } = require('./domain/get-account-operations')
 
+const { deposit } = require('./domain/deposit')
+
 const app = express()
 
 app.use(express.json())
@@ -102,6 +104,21 @@ app.get('/accounts/:cpf/extract', existsAccount, (request, response) => {
   return response
               .status(200)
               .json(operations)
+})
+
+app.post('/accounts/:cpf/deposit', existsAccount, (request, response) => {
+  const { account } = request
+  
+  const payload = request.body
+
+  deposit(account, payload)
+
+  return response
+              .status(201)
+              .json({
+                  account,
+                  message: 'Deposit with success'
+              })
 })
 
 module.exports = app
