@@ -1,6 +1,6 @@
 const { createAccount } = require('../../src/domain/create-an-account')
   
-describe('create an account', () => { 
+describe('creating an account', () => { 
   it('should return an account', async () => {
     const payload = { cpf: '11111111111', name: 'Anne Doe' }
 
