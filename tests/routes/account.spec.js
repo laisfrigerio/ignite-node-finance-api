@@ -141,3 +141,67 @@ describe('Updating an account', () => {
             })
   })
 })
+
+describe('Deleting an existing account', () => {
+  const payloadAnne = {
+      cpf: '44444444444',
+      name: 'Anne Doe'
+  }
+
+  it('should delete an existing customer', async () => {
+    await supertest(app)
+            .post('/accounts')
+            .send(payloadJohn)
+            .then((response) => {
+                expect(response.status).toBe(201)
+            })
+
+    await supertest(app)
+            .post('/accounts')
+            .send(payloadAnne)
+            .then((response) => {
+                expect(response.status).toBe(201)
+            })
+
+    await supertest(app)
+            .get(`/accounts/${payloadJohn.cpf}`)
+            .then((response) => {
+                const { cpf, name } = payloadJohn
+                expect(response.status).toBe(200)
+                expect(response.body.account.name).toBe(name)
+                expect(response.body.account.cpf).toBe(cpf)
+            })
+
+    await supertest(app)
+            .get(`/accounts/${payloadAnne.cpf}`)
+            .then((response) => {
+                const { cpf, name } = payloadAnne
+                expect(response.status).toBe(200)
+                expect(response.body.account.name).toBe(name)
+                expect(response.body.account.cpf).toBe(cpf)
+            })
+
+    await supertest(app)
+            .delete(`/accounts/${payloadJohn.cpf}`)
+            .then((response) => {
+                expect(response.status).toBe(200)
+                expect(response.body.message).toBe('Account deleted!')
+            })
+
+    await supertest(app)
+            .get(`/accounts/${payloadJohn.cpf}`)
+            .then((response) => {
+                expect(response.status).toBe(404)
+                expect(response.body.message).toBe('Account not found ;(')
+            })
+
+    await supertest(app)
+            .get(`/accounts/${payloadAnne.cpf}`)
+            .then((response) => {
+                const { cpf, name } = payloadAnne
+                expect(response.status).toBe(200)
+                expect(response.body.account.name).toBe(name)
+                expect(response.body.account.cpf).toBe(cpf)
+            })
+  })
+})

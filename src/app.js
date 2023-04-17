@@ -1,6 +1,7 @@
 const express = require('express')
 
 const { createAccount } = require('./domain/create-an-account')
+const { deleteAccount } = require('./domain/delete-an-account')
 const { findAccount } = require('./domain/find-an-account')
 const { updateAccount } = require('./domain/update-an-account')
 
@@ -71,6 +72,16 @@ app.put('/accounts/:cpf', existsAccount, (request, response) => {
                 message: 'Account updated!',
                 account
             })
+})
+
+app.delete('/accounts/:cpf', existsAccount, (request, response) => {
+  const { account } = request
+
+  deleteAccount(accounts, account)
+
+  return response
+          .status(200)
+          .json({ message: 'Account deleted!' })
 })
 
 app.get('/accounts/:cpf', existsAccount, (request, response) => {
