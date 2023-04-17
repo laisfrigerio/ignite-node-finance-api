@@ -205,3 +205,29 @@ describe('Deleting an existing account', () => {
             })
   })
 })
+
+describe('Return the operations of a account', () => {
+  beforeEach(async () => {
+    await supertest(app)
+            .post('/accounts')
+            .send(payloadJohn)
+  })
+
+  it('should find the customer and return a empty operation list', async () => {
+    await supertest(app)
+            .get(`/accounts/${payloadJohn.cpf}/extract`)
+            .then((response) => {
+                expect(response.status).toEqual(200)
+                expect(response.body).toEqual([])
+            })
+  })
+
+  it('should not found the customer', async () => {
+    await supertest(app)
+            .get('/accounts/44444444444/extract')
+            .then((response) => {
+                expect(response.status).toEqual(404)
+                expect(response.body.message).toEqual('Account not found ;(')
+            })
+  })
+})

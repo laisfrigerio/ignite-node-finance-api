@@ -4,6 +4,7 @@ const { createAccount } = require('./domain/create-an-account')
 const { deleteAccount } = require('./domain/delete-an-account')
 const { findAccount } = require('./domain/find-an-account')
 const { updateAccount } = require('./domain/update-an-account')
+const { getAccountOperations } = require('./domain/get-account-operations')
 
 const app = express()
 
@@ -90,6 +91,17 @@ app.get('/accounts/:cpf', existsAccount, (request, response) => {
   return response
             .status(200)
             .json({ account })
+})
+
+app.get('/accounts/:cpf/extract', existsAccount, (request, response) => {
+  const { account } = request
+  const { date } = request.query
+
+  const operations = getAccountOperations(account.statement, date)
+  
+  return response
+              .status(200)
+              .json(operations)
 })
 
 module.exports = app
