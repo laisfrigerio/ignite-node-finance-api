@@ -77,7 +77,7 @@ app.put('/accounts/:cpf', existsAccount, (request, response) => {
 app.delete('/accounts/:cpf', existsAccount, (request, response) => {
   const { account } = request
 
-  deleteAccount(accounts, account)
+  accounts = deleteAccount(accounts, account)
 
   return response
           .status(200)

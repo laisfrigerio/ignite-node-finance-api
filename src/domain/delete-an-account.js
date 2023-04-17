@@ -1,5 +1,5 @@
-const deleteAccount = (accounts, customer) => {
-  return accounts.splice(customer, 1)
+const deleteAccount = (accounts, account) => {
+  return accounts.filter(currentAccount => currentAccount.cpf !== account.cpf)
 }
 
 module.exports = {
