@@ -279,3 +279,86 @@ describe('Save a deposit', () => {
             })
   })
 })
+
+describe('Save a withdraw', () => {
+  const depositPayload = {
+    description: 'First deposit',
+    amount: 10
+  }
+
+  const withdrawPayload = {
+    description: 'First withdraw',
+    amount: 2
+  }
+
+  beforeEach(async () => {
+    await supertest(app)
+            .post('/accounts')
+            .send(payloadJohn)
+  })
+
+  it('should add a new withdraw in a existing account', async () => {
+    await supertest(app)
+            .get(`/accounts/${payloadJohn.cpf}/extract`)
+            .then((response) => {
+                expect(response.body).toEqual([])
+            })
+
+    await supertest(app)
+            .post(`/accounts/${payloadJohn.cpf}/deposit`)
+            .send(depositPayload)
+            .then((response) => {
+                expect(response.status).toEqual(201)
+                expect(response.body.message).toEqual('Deposit with success')
+            })
+
+    await supertest(app)
+            .post(`/accounts/${payloadJohn.cpf}/withdraw`)
+            .send(withdrawPayload)
+            .then((response) => {
+                expect(response.status).toEqual(201)
+                expect(response.body.message).toEqual('Withdraw with success')
+            })
+
+    await supertest(app)
+            .get(`/accounts/${payloadJohn.cpf}/extract`)
+            .then((response) => {
+                const firstDeposit = response.body[0]
+                const firstWithdraw = response.body[1]
+
+                expect(response.status).toEqual(200)
+                
+                expect(firstDeposit.description).toBe('First deposit')
+                expect(firstDeposit.type).toBe('credit')
+                expect(firstDeposit.amount).toBe(10)
+
+                expect(firstWithdraw.description).toBe('First withdraw')
+                expect(firstWithdraw.type).toBe('debit')
+                expect(firstWithdraw.amount).toBe(2)
+            })
+  })
+
+  it('should not a withdraw because the account not exists', async () => {
+    await supertest(app)
+            .post('/accounts/11111111111/withdraw')
+            .send(depositPayload)
+            .then((response) => {
+                expect(response.status).toEqual(404)
+            })
+  })
+
+  it('should not a withdraw because of Insufficient funds', async () => {
+    const withdrawPayload = {
+        description: 'First withdraw',
+        amount: 15
+    }
+
+    await supertest(app)
+            .post(`/accounts/${payloadJohn.cpf}/withdraw`)
+            .send(withdrawPayload)
+            .then((response) => {
+                expect(response.status).toEqual(400)
+                expect(response.body.message).toBe('Insufficient funds ;(')
+            })
+  })
+})

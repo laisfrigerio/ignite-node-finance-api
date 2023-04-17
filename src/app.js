@@ -7,6 +7,7 @@ const { updateAccount } = require('./domain/update-an-account')
 const { getAccountOperations } = require('./domain/get-account-operations')
 
 const { deposit } = require('./domain/deposit')
+const { withdraw } = require('./domain/withdraw')
 
 const app = express()
 
@@ -102,8 +103,8 @@ app.get('/accounts/:cpf/extract', existsAccount, (request, response) => {
   const operations = getAccountOperations(account.statement, date)
   
   return response
-              .status(200)
-              .json(operations)
+            .status(200)
+            .json(operations)
 })
 
 app.post('/accounts/:cpf/deposit', existsAccount, (request, response) => {
@@ -114,11 +115,32 @@ app.post('/accounts/:cpf/deposit', existsAccount, (request, response) => {
   deposit(account, payload)
 
   return response
+            .status(201)
+            .json({
+                account,
+                message: 'Deposit with success'
+            })
+})
+
+app.post('/accounts/:cpf/withdraw', existsAccount, (request, response) => {
+  try {
+    const { account } = request
+
+    const payload = request.body
+
+    withdraw(account, payload)
+
+    return response
               .status(201)
               .json({
                   account,
-                  message: 'Deposit with success'
+                  message: 'Withdraw with success'
               })
+  } catch (error) {
+    return response
+              .status(400)
+              .json({ message: error.message })
+  }
 })
 
 module.exports = app
