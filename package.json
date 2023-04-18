@@ -1,13 +1,13 @@
 {
-  "name": "boilerplate-docker-node-express-jest",
+  "name": "ignite-node-finance-api",
   "version": "1.0.0",
-  "repository": "git@github.com:laisfrigerio/boilerplate-docker-node-express-jest.git",
+  "repository": "git@github.com:laisfrigerio/ignite-node-finance-api.git",
   "author": "Lais Frigerio <laaisfrigerio@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "docker:build": "docker build . -t boilerplate-node-express-app",
-    "docker:run": "docker run -p 127.0.0.1:49127:3333 -d boilerplate-node-express-app",
-    "docker:test": "docker run -e CI=true boilerplate-node-express-app npm run test",
+    "docker:build": "docker build . -t ignite-node-finance-api",
+    "docker:run": "docker run -p 127.0.0.1:49127:3333 -d ignite-node-finance-api",
+    "docker:test": "docker run -e CI=true ignite-node-finance-api npm run test",
     "prettier:fix": "npx prettier --write .",
     "test": "jest"
   },
