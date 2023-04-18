@@ -1,24 +1,26 @@
-const { createAccount } = require('../../src/domain/create-an-account')
-  
-describe('creating an account', () => { 
-  it('should return an account', async () => {
-    const payload = { cpf: '11111111111', name: 'Anne Doe' }
+const { createAccount } = require("../../src/domain/create-an-account");
 
-    const account = createAccount([], payload)
+describe("creating an account", () => {
+  it("should return an account", async () => {
+    const payload = { cpf: "11111111111", name: "Anne Doe" };
 
-    expect(account.cpf).toBe(payload.cpf)
-    expect(account.name).toBe(payload.name)
-    expect(account.statement).toEqual([])
-  })
+    const account = createAccount([], payload);
 
-  it('should throws an exception', async () => {
-    const accounts = [{ cpf: '11111111111', name: 'Anne Doe' }]
-    const payload = { cpf: '11111111111', name: 'Louie Doe' }
+    expect(account.cpf).toBe(payload.cpf);
+    expect(account.name).toBe(payload.name);
+    expect(account.statement).toEqual([]);
+  });
 
-    function createAnExistingAccount () {
-      createAccount(accounts, payload)
+  it("should throws an exception", async () => {
+    const accounts = [{ cpf: "11111111111", name: "Anne Doe" }];
+    const payload = { cpf: "11111111111", name: "Louie Doe" };
+
+    function createAnExistingAccount() {
+      createAccount(accounts, payload);
     }
 
-    expect(createAnExistingAccount).toThrow(new Error('CPF is already registered!'))
-  })
-})
+    expect(createAnExistingAccount).toThrow(
+      new Error("CPF is already registered!")
+    );
+  });
+});

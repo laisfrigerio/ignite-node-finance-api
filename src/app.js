@@ -1,146 +1,125 @@
-const express = require('express')
+const express = require("express");
 
-const { createAccount } = require('./domain/create-an-account')
-const { deleteAccount } = require('./domain/delete-an-account')
-const { findAccount } = require('./domain/find-an-account')
-const { updateAccount } = require('./domain/update-an-account')
-const { getAccountOperations } = require('./domain/get-account-operations')
+const { createAccount } = require("./domain/create-an-account");
+const { deleteAccount } = require("./domain/delete-an-account");
+const { findAccount } = require("./domain/find-an-account");
+const { updateAccount } = require("./domain/update-an-account");
+const { getAccountOperations } = require("./domain/get-account-operations");
 
-const { deposit } = require('./domain/deposit')
-const { withdraw } = require('./domain/withdraw')
+const { deposit } = require("./domain/deposit");
+const { withdraw } = require("./domain/withdraw");
 
-const app = express()
+const app = express();
 
-app.use(express.json())
+app.use(express.json());
 
-let accounts = []
+let accounts = [];
 
 /*
  * Middleware to check customer/account exists
  */
 const existsAccount = (request, response, next) => {
   try {
-      const { cpf } = request.params
-      const account = findAccount(accounts, cpf)
+    const { cpf } = request.params;
+    const account = findAccount(accounts, cpf);
 
-      request.account = account
+    request.account = account;
 
-      next()
+    next();
   } catch (error) {
-      return response
-              .status(404)
-              .json({ message: 'Account not found ;(' })
+    return response.status(404).json({ message: "Account not found ;(" });
   }
-}
+};
 
-app.get('/', (request, response) => {
-    return response.json({ message: 'Hello World' })
-})
+app.get("/", (request, response) => {
+  return response.json({ message: "Hello World" });
+});
 
-app.post('/reset', (_, response) => {
-  accounts = []
-  return response.json({ message: 'Local database reset' })
-})
+app.post("/reset", (_, response) => {
+  accounts = [];
+  return response.json({ message: "Local database reset" });
+});
 
-app.post('/accounts', (request, response) => {
+app.post("/accounts", (request, response) => {
   try {
-    const payload = request.body
+    const payload = request.body;
 
-    const account = createAccount(accounts, payload)
+    const account = createAccount(accounts, payload);
 
-    accounts.push(account)
+    accounts.push(account);
 
-    return response
-            .status(201)
-            .json({ 
-                message: 'Account registered!',
-                account
-            })
-
+    return response.status(201).json({
+      message: "Account registered!",
+      account,
+    });
   } catch (error) {
-    return response
-            .status(400)
-            .json({ message: error.message })
+    return response.status(400).json({ message: error.message });
   }
-})
+});
 
-app.put('/accounts/:cpf', existsAccount, (request, response) => {
-  const { account } = request
-  const payload = request.body
+app.put("/accounts/:cpf", existsAccount, (request, response) => {
+  const { account } = request;
+  const payload = request.body;
 
-  updateAccount(account, payload)
+  updateAccount(account, payload);
 
-  return response
-            .status(200)
-            .json({ 
-                message: 'Account updated!',
-                account
-            })
-})
+  return response.status(200).json({
+    message: "Account updated!",
+    account,
+  });
+});
 
-app.delete('/accounts/:cpf', existsAccount, (request, response) => {
-  const { account } = request
+app.delete("/accounts/:cpf", existsAccount, (request, response) => {
+  const { account } = request;
 
-  accounts = deleteAccount(accounts, account)
+  accounts = deleteAccount(accounts, account);
 
-  return response
-          .status(200)
-          .json({ message: 'Account deleted!' })
-})
+  return response.status(200).json({ message: "Account deleted!" });
+});
 
-app.get('/accounts/:cpf', existsAccount, (request, response) => {
-  const { account } = request
+app.get("/accounts/:cpf", existsAccount, (request, response) => {
+  const { account } = request;
 
-  return response
-            .status(200)
-            .json({ account })
-})
+  return response.status(200).json({ account });
+});
 
-app.get('/accounts/:cpf/extract', existsAccount, (request, response) => {
-  const { account } = request
-  const { date } = request.query
+app.get("/accounts/:cpf/extract", existsAccount, (request, response) => {
+  const { account } = request;
+  const { date } = request.query;
 
-  const operations = getAccountOperations(account.statement, date)
-  
-  return response
-            .status(200)
-            .json(operations)
-})
+  const operations = getAccountOperations(account.statement, date);
 
-app.post('/accounts/:cpf/deposit', existsAccount, (request, response) => {
-  const { account } = request
-  
-  const payload = request.body
+  return response.status(200).json(operations);
+});
 
-  deposit(account, payload)
+app.post("/accounts/:cpf/deposit", existsAccount, (request, response) => {
+  const { account } = request;
 
-  return response
-            .status(201)
-            .json({
-                account,
-                message: 'Deposit with success'
-            })
-})
+  const payload = request.body;
 
-app.post('/accounts/:cpf/withdraw', existsAccount, (request, response) => {
+  deposit(account, payload);
+
+  return response.status(201).json({
+    account,
+    message: "Deposit with success",
+  });
+});
+
+app.post("/accounts/:cpf/withdraw", existsAccount, (request, response) => {
   try {
-    const { account } = request
+    const { account } = request;
 
-    const payload = request.body
+    const payload = request.body;
 
-    withdraw(account, payload)
+    withdraw(account, payload);
 
-    return response
-              .status(201)
-              .json({
-                  account,
-                  message: 'Withdraw with success'
-              })
+    return response.status(201).json({
+      account,
+      message: "Withdraw with success",
+    });
   } catch (error) {
-    return response
-              .status(400)
-              .json({ message: error.message })
+    return response.status(400).json({ message: error.message });
   }
-})
+});
 
-module.exports = app
+module.exports = app;
