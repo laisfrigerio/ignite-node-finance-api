@@ -362,3 +362,98 @@ describe('Save a withdraw', () => {
             })
   })
 })
+
+describe('Get operations by date', () => {
+  const depositPayload = {
+    description: 'First deposit',
+    amount: 10
+  }
+
+  const withdrawPayload = {
+    description: 'First withdraw',
+    amount: 2
+  }
+
+  beforeEach(async () => {
+    await supertest(app)
+            .post('/accounts')
+            .send(payloadJohn)
+  })
+
+  it('should return only the statements that matchs with date', async () => {
+    jest.spyOn(global.Date, 'now')
+        .mockImplementationOnce(() => new Date('2023-04-10T11:01:58.135Z'))
+        .mockImplementationOnce(() => new Date('2023-04-12T11:01:58.135Z'))
+
+    await supertest(app)
+            .post(`/accounts/${payloadJohn.cpf}/deposit`)
+            .send(depositPayload)
+            .then((response) => {
+                expect(response.status).toBe(201)
+                expect(response.body.message).toEqual('Deposit with success')
+            })
+
+    await supertest(app)
+            .post(`/accounts/${payloadJohn.cpf}/withdraw`)
+            .send(withdrawPayload)
+            .then((response) => {
+                expect(response.status).toBe(201)
+                expect(response.body.message).toEqual('Withdraw with success')
+            })
+
+    await supertest(app)
+            .get(`/accounts/${payloadJohn.cpf}/extract?date=2023-04-12`)
+            .then((response) => {
+                const firstWithdraw = response.body[0]
+
+                expect(response.status).toBe(200)
+                expect(response.body.length).toBe(1)
+
+                expect(firstWithdraw.description).toBe('First withdraw')
+                expect(firstWithdraw.type).toBe('debit')
+                expect(firstWithdraw.amount).toBe(2)
+            })
+
+    await supertest(app)
+            .get(`/accounts/${payloadJohn.cpf}/extract?date=2023-04-10`)
+            .then((response) => {
+                const firstDeposit = response.body[0]
+
+                expect(response.status).toBe(200)
+                expect(response.body.length).toBe(1)
+
+                expect(firstDeposit.description).toBe('First deposit')
+                expect(firstDeposit.type).toBe('credit')
+                expect(firstDeposit.amount).toBe(10)
+        })
+  })
+
+  it('should return an empty list because the data doesn`t match', async () => {
+      jest.spyOn(global.Date, 'now')
+          .mockImplementationOnce(() => new Date('2023-01-31T11:01:58.135Z'))
+          .mockImplementationOnce(() => new Date('2023-03-19T11:01:58.135Z'))
+
+      await supertest(app)
+              .post(`/accounts/${payloadJohn.cpf}/deposit`)
+              .send(depositPayload)
+              .then((response) => {
+                  expect(response.status).toBe(201)
+                  expect(response.body.message).toEqual('Deposit with success')
+              })
+
+      await supertest(app)
+              .post(`/accounts/${payloadJohn.cpf}/withdraw`)
+              .send(withdrawPayload)
+              .then((response) => {
+                  expect(response.status).toBe(201)
+                  expect(response.body.message).toEqual('Withdraw with success')
+              })
+
+      await supertest(app)
+              .get(`/accounts/${payloadJohn.cpf}/extract?date=2023-04-16`)
+              .then((response) => {
+                  expect(response.status).toBe(200)
+                  expect(response.body.length).toBe(0)
+          })
+  })
+})
