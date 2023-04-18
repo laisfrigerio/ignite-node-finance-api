@@ -51,16 +51,8 @@ We develop this boilerplate with the following docker version: `20.10.22`
 
 ## :gem: Prettier
 
-- npm
-
 ```
-    npx prettier --write .
-```
-
-- yarn
-
-```
-    yarn prettier --write .
+    npm run prettier:fix
 ```
 
 ## :woman: Author

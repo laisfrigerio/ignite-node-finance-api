@@ -8,6 +8,7 @@
     "docker:build": "docker build . -t boilerplate-node-express-app",
     "docker:run": "docker run -p 127.0.0.1:49127:3333 -d boilerplate-node-express-app",
     "docker:test": "docker run -e CI=true boilerplate-node-express-app npm run test",
+    "prettier:fix": "npx prettier --write .",
     "test": "jest"
   },
   "dependencies": {
