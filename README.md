@@ -11,27 +11,27 @@ A API to simulate an bank account
 
 ### Docker version
 
-We develop this boilerplate with the following docker version: `20.10.22`
+We develop this project with the following docker version: `20.10.22`
 
 ## :pencil: Features
 
-- :ballot_box_with_check: Cadastrar uma conta
-- :ballot_box_with_check: Listar o extrato de uma conta
-- :ballot_box_with_check: Listar o extrato por data/período
-- :ballot_box_with_check: Realizar um depósito
-- :ballot_box_with_check: Realizar um saque
-- :ballot_box_with_check: Atualizar dados da conta
-- :ballot_box_with_check: Obter dados da conta
-- :ballot_box_with_check: Deletar uma conta
+- :ballot_box_with_check: Create an account
+- :ballot_box_with_check: Extract from an account
+- :ballot_box_with_check: Extract by period
+- :ballot_box_with_check: Deposit
+- :ballot_box_with_check: Withdraw
+- :ballot_box_with_check: Update an account
+- :ballot_box_with_check: Retrieve details of an account
+- :ballot_box_with_check: Delete an account
 
 ## :pencil: Business rules
 
-- :ballot_box_with_check: CPF único
-- :ballot_box_with_check: Não pode ser possível realizar depósito em uma conta que não existe
-- :ballot_box_with_check: Não pode ser possível realizar um saque de uma conta que não existe
-- :ballot_box_with_check: Precisar ter limite suficiente para realizar o saque
-- :ballot_box_with_check: Não é possível buscar o extrato de uma conta inexistente
-- :ballot_box_with_check: Não é possível deletar uma conta inexistente
+- :ballot_box_with_check: Unique CPF (brazilian document)
+- :ballot_box_with_check: Cannot make a deposit to a non-existent account
+- :ballot_box_with_check: Cannot make a withdraw to a non-existent account
+- :ballot_box_with_check: You must have enough funds to carry out the withdraw
+- :ballot_box_with_check: Cannot fetch statement/operations for non-existent account
+- :ballot_box_with_check: Cannot delete a non-existent account
 
 ## :gem: Run application
 
